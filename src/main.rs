@@ -1,20 +1,14 @@
 extern crate pancurses;
-use pancurses::*;
-use std::collections::HashMap;
-mod rust_like_logic;
+mod gamelogic;
 
 fn main() {
-
+    use gamelogic::*;
+    use pancurses::*;
     // Create the tile lookup for TileID => Char
-    let mut tile_lookup = HashMap::new();
-    tile_lookup.insert(0, '#');
-    tile_lookup.insert(1, '@');
+    
     
     // Create the map
-    let mut x = rust_like_logic::map::GameMap{
-        tiles:[[0i32; 20]; 20],
-        lookup:tile_lookup
-    };
+    let mut x = map::GameMap::new();
 
     // Hollow out the map
     for row in 1..19{
@@ -25,16 +19,18 @@ fn main() {
 
     // Init window
     let window:Window = initscr();
+    set_title("Rusty Rogue!");
+    noecho();
 
     // Basic player position
-    let mut player_position = (10i32, 10i32);
+    let mut player_position = (6i32, 6i32);
 
     // Mainloop
     loop{
         use pancurses::Input::*;
 
         // Draw map
-        window.clear();
+        window.erase();
         window.printw(&x.to_string() as &str);
         window.refresh();
 
@@ -48,7 +44,7 @@ fn main() {
         match window.getch(){
             Some(key) =>
             match key{
-                Character('e') => break,
+                Character('E') => break,
                 Character('w') => player_position.1 -= 1,
                 Character('a') => player_position.0 -= 1,
                 Character('s') => player_position.1 += 1,
