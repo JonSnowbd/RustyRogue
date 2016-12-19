@@ -4,9 +4,7 @@ mod gamelogic;
 fn main() {
     use gamelogic::*;
     use pancurses::*;
-    // Create the tile lookup for TileID => Char
-    
-    
+
     // Create the map
     let mut x = map::GameMap::new();
 
@@ -54,8 +52,5 @@ fn main() {
             None => break
         }
     }
-
-    
     endwin();
-
 }
