@@ -9,14 +9,14 @@ use std::collections::HashMap;
 /// @TODO: vec!s for tiles, faster string rendering.
 pub struct GameMap{
     pub lookup:HashMap<i32, char>,
-    pub tiles:[[i32; 20]; 20]
+    pub tiles:Vec<Vec<i32>>
 }
 impl GameMap {
 
     /// Basic constructor for a map.
-    pub fn new() -> GameMap {
+    pub fn new(x_size:usize, y_size:usize) -> GameMap {
         GameMap{
-            tiles:[[0i32; 20]; 20],
+            tiles:vec![vec![0; x_size]; y_size],
             lookup:GameMap::default_lookup_map()
         }
     }
@@ -27,8 +27,8 @@ impl GameMap {
         // The string to be built.
         let mut result_string = String::new();
 
-        for row in 0..self.tiles.len(){
-            for val in self.tiles[row].iter(){
+        for row in self.tiles.iter() {
+            for val in row {
                 match self.lookup.get(val){
                     Some(t) => result_string.push(*t),
                     None => result_string.push(' ')
