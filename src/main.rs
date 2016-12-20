@@ -1,55 +1,55 @@
 extern crate pancurses;
+use pancurses::{Window};
 mod gamelogic;
 
-fn main() {
-    use gamelogic::*;
-    use pancurses::*;
 
-    // Create the map
-    let mut themap = map::GameMap::new(20,20);
-
-    for y in 1..19{
-        for x in 1..19{
-            themap.set_tile(x, y, -1);
+struct PancursesRenderer{
+    window:Window
+}
+impl PancursesRenderer{
+    pub fn new(w:Window) -> PancursesRenderer {
+        PancursesRenderer{
+            window:w
         }
     }
+}
 
-    // Init window
-    let window:Window = initscr();
-    set_title("Rusty Rogue!");
-    noecho();
-
-    // Basic player position
-    let mut player_position = (6i32, 6i32);
-
-    // Mainloop
-    loop{
+impl gamelogic::app::RenderHandle for PancursesRenderer {
+    fn init(&self){
+        pancurses::set_title("Working!")
+    }
+    fn draw_at(&self, x:i32, y:i32, string:&str){
+        self.window.mv(x, y);
+        self.window.printw(string);
+    }
+    fn clear(&self){
+        self.window.erase();
+    }
+    fn end(&self){
+        pancurses::endwin();
+    }
+    fn await_input(&self) -> gamelogic::app::AppInput {
+        use gamelogic::app::{AppInput};
         use pancurses::Input::*;
-
-        // Draw map
-        window.erase();
-        window.printw(&themap.to_string() as &str);
-        window.refresh();
-
-        // Draw player
-        window.mv(player_position.1, player_position.0);
-        window.printw("@");
-        window.mv(0,21);
-        window.printw("wasd to move, E to exit.");
-
-        // Query Input
-        match window.getch(){
+        match self.window.getch(){
             Some(key) =>
             match key{
-                Character('E') => break,
-                Character('w') => player_position.1 -= 1,
-                Character('a') => player_position.0 -= 1,
-                Character('s') => player_position.1 += 1,
-                Character('d') => player_position.0 += 1,
-                _ => {}
+                Character('E') => AppInput::Exit,
+                Character('w') => AppInput::PlayerMovement{x:0,y:-1},
+                Character('a') => AppInput::PlayerMovement{x:-1,y:0},
+                Character('s') => AppInput::PlayerMovement{x:0,y:1},
+                Character('d') => AppInput::PlayerMovement{x:1,y:0},
+                _ => AppInput::Nothing
             },
-            None => {}
+            None => AppInput::Nothing
         }
     }
-    endwin();
+}
+
+fn main() {
+    let window:Window = pancurses::initscr();
+    let pcr = PancursesRenderer::new(window);
+
+    let mut game_app = gamelogic::app::GameApplication::new(&pcr);
+    game_app.start();
 }
