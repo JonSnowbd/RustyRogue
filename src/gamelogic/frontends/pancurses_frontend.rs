@@ -1,6 +1,9 @@
 use pancurses::*;
 use gamelogic::app::*;
 
+pub const PLAYERCOLOR:i16 = 1;
+pub const FLOORCOLOR:i16 = 2;
+
 pub struct PancursesRenderer{
     window:Window
 }
@@ -14,10 +17,16 @@ impl PancursesRenderer{
 
 impl RenderHandle for PancursesRenderer {
     fn init(&self){
-        set_title("Working!")
+        set_title("Rusty Rogue");
+        start_color();
+        noecho();
+
+        init_pair(1, 3, 0);
+        init_pair(2, 2, 1);
     }
-    fn draw_at(&self, x:i32, y:i32, string:&str){
+    fn draw_at(&self, x:i32, y:i32, string:&str, _color:i16){
         self.window.mv(y, x);
+        self.window.color_set(_color);
         self.window.printw(string);
     }
     fn clear(&self){
