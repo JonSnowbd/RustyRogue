@@ -43,17 +43,28 @@ impl<'a> GameApplication<'a>{
 
     pub fn start(&'a mut self){
         self.render_handle.init();
+
+        // Basically test code to simulate a player entity.
+        let mut ppos = (3i32, 3i32);
         for x in 1..19{
             for y in 1..19{
                 self.map.set_tile(x, y, -1);
             }
         }
+
         loop{
             self.render_handle.clear();
             self.render_handle.draw_at(0,0,&self.map.to_string() as &str);
+            self.render_handle.draw_at(ppos.0, ppos.1, "@");
+            self.render_handle.draw_at(23, 1, "wasd to move, E to exit(capital e)");
+
 
             match self.render_handle.await_input(){
                 AppInput::Exit => break,
+                AppInput::PlayerMovement{x, y} => {
+                    ppos.0 += x;
+                    ppos.1 += y;
+                }
                 _ => {}
             }
 

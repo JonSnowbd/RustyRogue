@@ -19,7 +19,7 @@ impl gamelogic::app::RenderHandle for PancursesRenderer {
         pancurses::set_title("Working!")
     }
     fn draw_at(&self, x:i32, y:i32, string:&str){
-        self.window.mv(x, y);
+        self.window.mv(y, x);
         self.window.printw(string);
     }
     fn clear(&self){
