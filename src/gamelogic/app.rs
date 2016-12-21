@@ -1,4 +1,4 @@
-use super::map;
+use gamelogic::map;
 
 /// A simple representation of an Entity such as the player, a mob, an item drop etc.
 pub struct Entity{
